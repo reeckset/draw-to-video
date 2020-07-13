@@ -15,10 +15,10 @@ if (!fs.existsSync(OUTPUT_TMP_FOLDER)) {
 }
 
 const emptyOutputFolder = () => {
-    const files = fs.readdirSync(OUTPUT_FOLDER, { withFileTypes: true });
+    const files = fs.readdirSync(OUTPUT_TMP_FOLDER, { withFileTypes: true });
 
     files.forEach((file) => {
-        if (file.isFile()) fs.unlinkSync(path.join(OUTPUT_FOLDER, file));
+        if (file.isFile()) fs.unlinkSync(path.join(OUTPUT_TMP_FOLDER, file.name));
     });
 };
 
@@ -31,17 +31,14 @@ const canvasDataToImage = (frameNumber, img) => {
 const createImages = (drawingHistory) => {
     console.log('exporting');
 
-    let frameCounter = 0;
-    drawingHistory.forEach((event) => {
-        event.points.forEach((point) => {
-            renderCanvas(ctx, drawingHistory, point.timestamp);
-            canvasDataToImage(frameCounter++, canvas.toDataURL());
-        });
+    drawingHistory.forEach((_, i) => {
+        renderCanvas(ctx, drawingHistory, i);
+        canvasDataToImage(i, canvas.toDataURL());
     });
 };
 
 const compileImagesWithFFMPEG = () => {
-    const child = spawn('ffmpeg', ['-framerate', '60', '-i', `${OUTPUT_TMP_FOLDER}/%05d.png`, '-pix_fmt', 'yuv420p', '-y', 'output/output.mp4']);
+    const child = spawn('ffmpeg', ['-framerate', '60', '-i', `${OUTPUT_TMP_FOLDER}/%05d.png`, '-pix_fmt', 'yuv420p', '-y', `${OUTPUT_FOLDER}/output.mp4`]);
 
     child.stdout.setEncoding('utf8');
     child.stdout.on('data', (chunk) => {

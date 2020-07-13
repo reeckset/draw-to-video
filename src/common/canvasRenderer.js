@@ -1,4 +1,6 @@
-const renderCanvas = (ctx, drawingHistory, untilTimestamp) => {
+const RENDER_ACTIONS = require('./RENDER_ACTIONS');
+
+const renderCanvas = (ctx, drawingHistory, untilActionIndex) => {
     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
     ctx.fillStyle = '#ffffff';
     ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
@@ -7,28 +9,24 @@ const renderCanvas = (ctx, drawingHistory, untilTimestamp) => {
     ctx.lineJoin = 'round';
     ctx.lineWidth = 5;
 
-    let finishedRendering = false;
+    for (let i = 0; i < drawingHistory.length; i++) {
+        const event = drawingHistory[i];
+        if (i > untilActionIndex) break;
 
-    for (const event of drawingHistory) {
-        if (!event.points || event.points.length === 0) {
-            continue;
+        if (event.action === RENDER_ACTIONS.ADD_POINT) {
+            ctx.lineTo(event.point.x, event.point.y);
+        } else {
+            ctx.stroke();
         }
 
-        if (event.brushColor) ctx.strokeStyle = event.brushColor;
-
-        ctx.beginPath();
-        ctx.moveTo(event.points[0].x, event.points[0].y);
-        for (const point of event.points) {
-            if (untilTimestamp && point.timestamp > untilTimestamp) {
-                finishedRendering = true;
-                break;
-            }
-            ctx.lineTo(point.x, point.y);
+        if (event.action === RENDER_ACTIONS.START_STROKE) {
+            ctx.beginPath();
+            ctx.moveTo(event.point.x, event.point.y);
         }
 
-        ctx.stroke();
-
-        if (finishedRendering) break;
+        if (event.action === RENDER_ACTIONS.SET_BRUSH_COLOR) {
+            ctx.strokeStyle = event.brushColor;
+        }
     }
 };
 

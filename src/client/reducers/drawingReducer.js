@@ -1,9 +1,10 @@
-import DRAW_TYPES from '../../common/DRAW_TYPES';
 import ACTION_TYPES from '../actions/ACTION_TYPES';
+
+const RENDER_ACTIONS = require('../../common/RENDER_ACTIONS');
 
 const initialState = {
     history: [],
-    selectedTimestamp: null,
+    timelineState: 1,
     isDrawing: false,
     brushColor: '#000000',
 };
@@ -11,45 +12,58 @@ const initialState = {
 /**
  * history: [
  *      {
- *          type: DRAW_TYPES._,
- *          points: [{x, y, timestamp}],
- *          brushColor: '#000000',
+ *          action: ACTION_TYPE.,
+ *          ...payload (may be point ({x, y}), color, etc)
  *      }
  * ]
  */
+
+
+const getHistoryUntilCurrentTimeline = ({ history, timelineState }) => {
+    const currentActionIndex = Math.round(timelineState * history.length);
+    return history.slice(0, currentActionIndex);
+};
 
 export default (state = initialState, action) => {
     switch (action.type) {
     case ACTION_TYPES.ADD_POINT:
         if (state.history.length > 0 && state.isDrawing) {
-            const newHistory = [...state.history];
-            const oldDrawEvent = newHistory.pop();
-            newHistory.push({
-                ...oldDrawEvent,
-                points: [...oldDrawEvent.points, action.payload]
-            });
-            return { ...state, history: newHistory };
+            return {
+                ...state,
+                timelineState: 1,
+                history: [...getHistoryUntilCurrentTimeline(state), {
+                    action: RENDER_ACTIONS.ADD_POINT,
+                    point: action.payload,
+                }]
+            };
         }
         break;
     case ACTION_TYPES.START_STROKE:
         return {
             ...state,
             isDrawing: true,
-            history: [...state.history, {
-                brushColor: state.brushColor,
-                type: DRAW_TYPES.DRAW,
-                points: [action.payload]
+            timelineState: 1,
+            history: [...getHistoryUntilCurrentTimeline(state), {
+                action: RENDER_ACTIONS.START_STROKE,
+                point: action.payload
             }]
         };
-    case ACTION_TYPES.SET_SELECTED_TIMESTAMP:
+    case ACTION_TYPES.SET_TIMELINE_STATE:
         return {
             ...state,
-            selectedTimestamp: action.payload
+            timelineState: action.payload
         };
     case ACTION_TYPES.STOP_DRAWING:
         return { ...state, isDrawing: false };
     case ACTION_TYPES.SET_BRUSH_COLOR:
-        return { ...state, brushColor: action.payload };
+        return {
+            ...state,
+            brushColor: action.payload,
+            history: [...getHistoryUntilCurrentTimeline(state), {
+                action: RENDER_ACTIONS.SET_BRUSH_COLOR,
+                color: state.brushColor
+            }]
+        };
     default:
         return state;
     }

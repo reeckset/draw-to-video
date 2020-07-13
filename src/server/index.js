@@ -5,7 +5,7 @@ const bodyParser = require('body-parser');
 const createVideo = require('./exporter');
 
 const app = express();
-app.use(bodyParser.json());
+app.use(bodyParser.json({ limit: '50mb' }));
 
 const publicDir = path.join(__dirname, '../../public');
 const distDir = path.join(__dirname, '../../dist');

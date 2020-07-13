@@ -3,7 +3,7 @@ import useInterval from '../hooks/useInterval';
 import renderCanvas from '../../common/canvasRenderer';
 
 const DrawingCanvas = React.forwardRef(({
-    refreshRate, drawingHistory, atTimestamp, size
+    refreshRate, drawingHistory, atActionIndex, size
 }, ref) => {
     const [context, setContext] = useState(null);
 
@@ -13,7 +13,7 @@ const DrawingCanvas = React.forwardRef(({
 
     useInterval(() => {
         if (context) {
-            renderCanvas(context, drawingHistory, atTimestamp);
+            renderCanvas(context, drawingHistory, atActionIndex);
         }
     }, 1000 / refreshRate);
 

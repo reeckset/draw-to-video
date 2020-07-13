@@ -10,14 +10,14 @@ const addEventListeners = (canvas, { addPoint, startStroke, stopDrawing }) => {
         const mouseX = e.pageX - canvas.offsetLeft;
         const mouseY = e.pageY - canvas.offsetTop;
 
-        startStroke({ x: mouseX, y: mouseY, timestamp: Date.now() });
+        startStroke({ x: mouseX, y: mouseY });
     });
 
     canvas.addEventListener('mousemove', (e) => {
         const mouseX = e.pageX - canvas.offsetLeft;
         const mouseY = e.pageY - canvas.offsetTop;
 
-        addPoint({ x: mouseX, y: mouseY, timestamp: Date.now() });
+        addPoint({ x: mouseX, y: mouseY });
     });
 
     canvas.addEventListener('mouseup', () => {
@@ -29,7 +29,12 @@ const addEventListeners = (canvas, { addPoint, startStroke, stopDrawing }) => {
 };
 
 const MainPage = ({
-    drawingHistory, selectedTimestamp, drawingControls, canvasSize, onTimelineSelect
+    drawingHistory,
+    selectedActionIndex,
+    drawingControls,
+    canvasSize,
+    onTimelineSelect,
+    timelineState
 }) => {
     const canvasRef = useRef();
 
@@ -39,13 +44,17 @@ const MainPage = ({
     return (
         <>
             <ExportButton drawingHistory={drawingHistory} />
-            <Timeline width={canvasSize.width} onTimelineSelect={onTimelineSelect} />
+            <Timeline
+                width={canvasSize.width}
+                onTimelineSelect={onTimelineSelect}
+                timelineState={timelineState}
+            />
             <DrawingCanvas
                 ref={canvasRef}
                 refreshRate={30}
                 size={canvasSize}
                 drawingHistory={drawingHistory}
-                atTimestamp={selectedTimestamp}
+                atActionIndex={selectedActionIndex}
             />
         </>
     );
@@ -53,10 +62,16 @@ const MainPage = ({
 
 export default connect(state => ({
     drawingHistory: state.drawing.history,
-    selectedTimestamp: state.drawing.selectedTimestamp,
+    timelineState: state.drawing.timelineState,
+    selectedActionIndex: Math.round(
+        state.drawing.timelineState * (state.drawing.history.length - 1)
+    ),
     canvasSize: { width: state.settings.canvasWidth, height: state.settings.canvasHeight }
 }), dispatch => ({
-    onTimelineSelect: payload => dispatch({ type: ACTION_TYPES.SET_SELECTED_TIMESTAMP, payload }),
+    onTimelineSelect: payload => dispatch({
+        type: ACTION_TYPES.SET_TIMELINE_STATE,
+        payload
+    }),
     drawingControls: {
         startStroke: payload => dispatch({ type: ACTION_TYPES.START_STROKE, payload }),
         addPoint: payload => dispatch({ type: ACTION_TYPES.ADD_POINT, payload }),

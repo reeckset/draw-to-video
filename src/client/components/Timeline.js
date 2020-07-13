@@ -14,7 +14,7 @@ const useStyles = width => makeStyles(theme => ({
     }
 }));
 
-const Timeline = ({ width, onTimelineSelect }) => {
+const Timeline = ({ width, timelineState, onTimelineSelect }) => {
     const classes = useStyles(width)();
 
     const wrapperRef = useRef();
@@ -23,7 +23,13 @@ const Timeline = ({ width, onTimelineSelect }) => {
         wrapperRef.current && wrapperRef.current.addEventListener('scroll', () => {
             onTimelineSelect(wrapperRef.current.scrollLeft / wrapperRef.current.scrollLeftMax);
         });
-    }, wrapperRef.current);
+        wrapperRef.current.scrollTo(wrapperRef.current.scrollLeftMax, 0);
+    }, [wrapperRef.current]);
+
+    useEffect(() => wrapperRef.current
+        && wrapperRef.current.scrollTo(
+            timelineState * wrapperRef.current.scrollLeftMax, 0
+        ), [timelineState]);
 
     return (
         <>
