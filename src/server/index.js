@@ -25,17 +25,6 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser({ keepExtensions: true, uploadDir: OUTPUT_TMP_FOLDER }));
 
 
-// app.post('/export', (req, res) => {
-//     console.log(req.query.drawingHistory);
-//     form.parse(req, (err, fields, files) => {
-//         console.log(req.query.drawingHistory);
-//         console.log(JSON.parse(req.query.drawingHistory));
-//         createVideo({ drawingHistory: JSON.parse(req.query.drawingHistory), audio: files[0] });
-//         res.send('Done!');
-//     });
-// });
-
-
 app.post('/export', upload.single('audio-file'), (req, res) => {
     // req.file is the name of your file in the form above, here 'uploaded_file'
     // req.body will hold the text fields, if there were any

@@ -63,17 +63,25 @@ export default (state = initialState, action) => {
             brushColor: action.payload,
             history: [...getHistoryUntilCurrentTimeline(state), {
                 action: RENDER_ACTIONS.SET_BRUSH_COLOR,
-                color: state.brushColor
+                color: action.payload
             }]
         };
-    case ACTION_TYPES.SET_AUDIO: {
+    case ACTION_TYPES.SET_AUDIO:
         return {
             ...state,
             audioFile: action.payload,
             timelineState: null,
             history: [],
         };
-    }
+
+    case ACTION_TYPES.CLEAR_CANVAS:
+        return {
+            ...state,
+            history: [...getHistoryUntilCurrentTimeline(state), {
+                action: RENDER_ACTIONS.CLEAR_CANVAS,
+            }],
+        };
+
     default:
         return state;
     }

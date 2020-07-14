@@ -20,5 +20,7 @@ module.exports = {
     "no-continue": "off",
     "no-unused-expressions": "off",
     "jsx-a11y/media-has-caption": "off",
+    "jsx-a11y/label-has-associated-control": "off",
+    "jsx-a11y/label-has-for": "off",
   }
 }

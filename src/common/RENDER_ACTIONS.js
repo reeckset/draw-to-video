@@ -1,5 +1,6 @@
-module.exports = {
+module.exports = Object.freeze({
     ADD_POINT: 'ADD_POINT',
     START_STROKE: 'START_STROKE',
     SET_BRUSH_COLOR: 'SET_BRUSH_COLOR',
-};
+    CLEAR_CANVAS: 'CLEAR_CANVAS',
+});

@@ -14,7 +14,7 @@ const DrawingCanvas = ({ drawingHistory, audioFile }) => {
     };
 
     return (
-        <Button onClick={exportDrawing}>Export</Button>
+        <div><Button onClick={exportDrawing} color="primary" variant="contained" component="span">Export</Button></div>
     );
 };
 

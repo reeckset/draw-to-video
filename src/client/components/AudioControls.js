@@ -7,8 +7,10 @@ const useStyles = width => makeStyles(() => ({
     wrapper: {
         width,
         display: 'flex',
+        margin: '12px 0px',
     },
     speedPicker: {
+        marginLeft: '24px',
         width: '200px',
     }
 }));

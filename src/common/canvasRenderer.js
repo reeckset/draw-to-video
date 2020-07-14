@@ -1,11 +1,13 @@
 const RENDER_ACTIONS = require('./RENDER_ACTIONS');
 
+const clearCanvas = ctx => ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+
 const renderCanvas = (ctx, drawingHistory, untilActionIndex, useActionIndexAsTimestamp) => {
     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
     ctx.fillStyle = '#ffffff';
-    ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+    clearCanvas(ctx);
 
-    ctx.strokeStyle = '#df4b26';
+    let nextBrushColor = '#000000';
     ctx.lineJoin = 'round';
     ctx.lineWidth = 5;
 
@@ -16,17 +18,22 @@ const renderCanvas = (ctx, drawingHistory, untilActionIndex, useActionIndexAsTim
 
         if (event.action === RENDER_ACTIONS.ADD_POINT) {
             ctx.lineTo(event.point.x, event.point.y);
-        } else {
             ctx.stroke();
         }
 
         if (event.action === RENDER_ACTIONS.START_STROKE) {
             ctx.beginPath();
+            ctx.strokeStyle = nextBrushColor;
             ctx.moveTo(event.point.x, event.point.y);
         }
 
+
+        if (event.action === RENDER_ACTIONS.CLEAR_CANVAS) {
+            clearCanvas(ctx);
+        }
+
         if (event.action === RENDER_ACTIONS.SET_BRUSH_COLOR) {
-            ctx.strokeStyle = event.brushColor;
+            nextBrushColor = event.color;
         }
     }
 };

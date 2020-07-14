@@ -7,7 +7,7 @@ window.addEventListener('resize',
 const theme = createMuiTheme({
     palette: {
         primary: {
-            main: '#50A0BB',
+            main: '#70C0DB',
         },
         secondary: {
             main: '#777',

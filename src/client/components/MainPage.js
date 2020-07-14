@@ -1,12 +1,11 @@
 import React, { useEffect, useRef } from 'react';
 import { connect } from 'react-redux';
 import DrawingCanvas from './DrawingCanvas';
-import ExportButton from './ExportButton';
 import ACTION_TYPES from '../actions/ACTION_TYPES';
 import Timeline from './Timeline';
-import AudioPicker from './AudioPicker';
 import AudioPlayer from './AudioControls';
 import { getActionIndexFromTimelineState } from '../selectors/timelineSelectors';
+import TopBar from './TopBar';
 
 const { framerate } = require('../../common/recordingOptions');
 
@@ -40,7 +39,6 @@ const MainPage = ({
     canvasSize,
     onTimelineSelect,
     timelineState,
-    setAudioFile,
     audioFile,
 }) => {
     const canvasRef = useRef();
@@ -55,8 +53,7 @@ const MainPage = ({
 
     return (
         <>
-            <ExportButton drawingHistory={drawingHistory} audioFile={audioFile} />
-            <AudioPicker onSelectFile={setAudioFile} />
+            <TopBar />
             {audioFile
                 ? (
                     <AudioPlayer
@@ -97,7 +94,6 @@ export default connect(state => ({
         type: ACTION_TYPES.SET_TIMELINE_STATE,
         payload
     }),
-    setAudioFile: payload => dispatch({ type: ACTION_TYPES.SET_AUDIO, payload }),
     drawingControls: {
         startStroke: payload => dispatch({ type: ACTION_TYPES.START_STROKE, payload }),
         addPoint: payload => dispatch({ type: ACTION_TYPES.ADD_POINT, payload }),
