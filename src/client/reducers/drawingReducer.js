@@ -1,12 +1,14 @@
 import ACTION_TYPES from '../actions/ACTION_TYPES';
+import { getActionIndexFromTimelineState } from '../selectors/timelineSelectors';
 
 const RENDER_ACTIONS = require('../../common/RENDER_ACTIONS');
 
 const initialState = {
     history: [],
-    timelineState: 1,
+    timelineState: null,
     isDrawing: false,
     brushColor: '#000000',
+    audioFile: null,
 };
 
 /**
@@ -19,9 +21,9 @@ const initialState = {
  */
 
 
-const getHistoryUntilCurrentTimeline = ({ history, timelineState }) => {
-    const currentActionIndex = Math.round(timelineState * history.length);
-    return history.slice(0, currentActionIndex);
+const getHistoryUntilCurrentTimeline = (drawingState) => {
+    const currentActionIndex = getActionIndexFromTimelineState(drawingState);
+    return drawingState.history.slice(0, currentActionIndex + 1);
 };
 
 export default (state = initialState, action) => {
@@ -30,10 +32,10 @@ export default (state = initialState, action) => {
         if (state.history.length > 0 && state.isDrawing) {
             return {
                 ...state,
-                timelineState: 1,
+                timelineState: null,
                 history: [...getHistoryUntilCurrentTimeline(state), {
+                    ...action.payload,
                     action: RENDER_ACTIONS.ADD_POINT,
-                    point: action.payload,
                 }]
             };
         }
@@ -42,10 +44,10 @@ export default (state = initialState, action) => {
         return {
             ...state,
             isDrawing: true,
-            timelineState: 1,
+            timelineState: null,
             history: [...getHistoryUntilCurrentTimeline(state), {
+                ...action.payload,
                 action: RENDER_ACTIONS.START_STROKE,
-                point: action.payload
             }]
         };
     case ACTION_TYPES.SET_TIMELINE_STATE:
@@ -64,6 +66,14 @@ export default (state = initialState, action) => {
                 color: state.brushColor
             }]
         };
+    case ACTION_TYPES.SET_AUDIO: {
+        return {
+            ...state,
+            audioFile: action.payload,
+            timelineState: null,
+            history: [],
+        };
+    }
     default:
         return state;
     }

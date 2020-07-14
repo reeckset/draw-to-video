@@ -6,15 +6,16 @@ const ctx = canvas.getContext('2d');
 const fs = require('fs');
 const { spawn } = require('child_process');
 const renderCanvas = require('../common/canvasRenderer');
+const { framerate } = require('../common/recordingOptions');
 
-const OUTPUT_FOLDER = 'output';
-const OUTPUT_TMP_FOLDER = 'output/tmp';
+const { OUTPUT_TMP_FOLDER, OUTPUT_FOLDER } = require('../common/recordingOptions');
+
 
 if (!fs.existsSync(OUTPUT_TMP_FOLDER)) {
     fs.mkdirSync(OUTPUT_TMP_FOLDER, { recursive: true });
 }
 
-const emptyOutputFolder = () => {
+const emptyOutputTmpFolder = () => {
     const files = fs.readdirSync(OUTPUT_TMP_FOLDER, { withFileTypes: true });
 
     files.forEach((file) => {
@@ -28,32 +29,53 @@ const canvasDataToImage = (frameNumber, img) => {
     fs.writeFileSync(`${OUTPUT_TMP_FOLDER}/${String(frameNumber).padStart(5, 0)}.png`, buf);
 };
 
-const createImages = (drawingHistory) => {
+const createImages = (drawingHistory, audioFile) => {
     console.log('exporting');
 
-    drawingHistory.forEach((_, i) => {
-        renderCanvas(ctx, drawingHistory, i);
-        canvasDataToImage(i, canvas.toDataURL());
-    });
+    if (audioFile) {
+        for (let i = 0; i / framerate <= drawingHistory[drawingHistory.length - 1].timestamp; i++) {
+            renderCanvas(ctx, drawingHistory, i / framerate, true);
+            canvasDataToImage(i, canvas.toDataURL());
+        }
+    } else {
+        drawingHistory.forEach((_, i) => {
+            renderCanvas(ctx, drawingHistory, i);
+            canvasDataToImage(i, canvas.toDataURL());
+        });
+    }
 };
 
-const compileImagesWithFFMPEG = () => {
-    const child = spawn('ffmpeg', ['-framerate', '60', '-i', `${OUTPUT_TMP_FOLDER}/%05d.png`, '-pix_fmt', 'yuv420p', '-y', `${OUTPUT_FOLDER}/output.mp4`]);
+const compileImagesWithFFMPEG = (audioPath) => {
+    const child = spawn('ffmpeg', [
+        '-i', `${audioPath}`,
+        '-framerate', `${framerate}`,
+        '-i', `${OUTPUT_TMP_FOLDER}/%05d.png`,
+        '-f', 'lavfi',
+        '-i', 'color=c=black@0.0:size=2x2',
+        '-filter_complex', '[1:v][2:v]overlay[v]', '-map', '[v]', '-map', '0:a', '-shortest',
+        '-pix_fmt', 'yuv420p',
+        '-y', `${OUTPUT_FOLDER}/output.mp4`]);
 
-    child.stdout.setEncoding('utf8');
-    child.stdout.on('data', (chunk) => {
-        console.log(chunk);
-    });
+    // child.stdout.setEncoding('utf8');
+    // child.stdout.on('data', (chunk) => {
+    //     console.log(chunk);
+    // });
+    // child.stderr.setEncoding('utf8');
+    // child.stderr.on('data', (chunk) => {
+    //     console.log(chunk);
+    // });
 
     child.on('close', (code) => {
         console.log(`FFMPEG DONE! Exited with code ${code}`);
+        emptyOutputTmpFolder();
     });
 };
 
-const createVideo = (drawingHistory) => {
-    emptyOutputFolder();
-    createImages(drawingHistory);
-    compileImagesWithFFMPEG();
+const createVideo = ({ drawingHistory, audio }) => {
+    console.log('drawing history', drawingHistory[0]);
+    console.log('audio', audio);
+    createImages(drawingHistory, audio);
+    compileImagesWithFFMPEG(audio);
 };
 
 module.exports = createVideo;

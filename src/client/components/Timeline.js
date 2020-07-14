@@ -1,12 +1,12 @@
 import React, { useRef, useEffect } from 'react';
 import { makeStyles } from '@material-ui/styles';
 
-const useStyles = width => makeStyles(theme => ({
+const useStyles = width => makeStyles(() => ({
     wrapper: {
         width,
         height: '50px',
         overflowX: 'scroll',
-        backgroundColor: theme.palette.primary.main
+        overflowY: 'hidden',
     },
     inner: {
         width: width * 100,
@@ -28,7 +28,7 @@ const Timeline = ({ width, timelineState, onTimelineSelect }) => {
 
     useEffect(() => wrapperRef.current
         && wrapperRef.current.scrollTo(
-            timelineState * wrapperRef.current.scrollLeftMax, 0
+            (timelineState === null ? 1 : timelineState) * wrapperRef.current.scrollLeftMax, 0
         ), [timelineState]);
 
     return (

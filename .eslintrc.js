@@ -19,5 +19,6 @@ module.exports = {
     "no-restricted-syntax": "off",
     "no-continue": "off",
     "no-unused-expressions": "off",
+    "jsx-a11y/media-has-caption": "off",
   }
 }
