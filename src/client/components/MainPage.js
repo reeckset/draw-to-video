@@ -5,7 +5,7 @@ import ExportButton from './ExportButton';
 import ACTION_TYPES from '../actions/ACTION_TYPES';
 import Timeline from './Timeline';
 import AudioPicker from './AudioPicker';
-import AudioPlayer from './AudioPlayer';
+import AudioPlayer from './AudioControls';
 import { getActionIndexFromTimelineState } from '../selectors/timelineSelectors';
 
 const { framerate } = require('../../common/recordingOptions');

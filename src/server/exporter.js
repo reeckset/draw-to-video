@@ -47,23 +47,24 @@ const createImages = (drawingHistory, audioFile) => {
 
 const compileImagesWithFFMPEG = (audioPath) => {
     const child = spawn('ffmpeg', [
-        '-i', `${audioPath}`,
         '-framerate', `${framerate}`,
         '-i', `${OUTPUT_TMP_FOLDER}/%05d.png`,
-        '-f', 'lavfi',
-        '-i', 'color=c=black@0.0:size=2x2',
-        '-filter_complex', '[1:v][2:v]overlay[v]', '-map', '[v]', '-map', '0:a', '-shortest',
+        ...audioPath ? [
+            '-i', `${audioPath}`,
+            '-f', 'lavfi',
+            '-i', 'color=c=black@0.0:size=2x2',
+            '-filter_complex', '[0:v][2:v]overlay[v]', '-map', '[v]', '-map', '1:a', '-shortest'] : [],
         '-pix_fmt', 'yuv420p',
         '-y', `${OUTPUT_FOLDER}/output.mp4`]);
 
-    // child.stdout.setEncoding('utf8');
-    // child.stdout.on('data', (chunk) => {
-    //     console.log(chunk);
-    // });
-    // child.stderr.setEncoding('utf8');
-    // child.stderr.on('data', (chunk) => {
-    //     console.log(chunk);
-    // });
+    child.stdout.setEncoding('utf8');
+    child.stdout.on('data', (chunk) => {
+        console.log(chunk);
+    });
+    child.stderr.setEncoding('utf8');
+    child.stderr.on('data', (chunk) => {
+        console.log(chunk);
+    });
 
     child.on('close', (code) => {
         console.log(`FFMPEG DONE! Exited with code ${code}`);
