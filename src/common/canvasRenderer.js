@@ -7,7 +7,6 @@ const renderCanvas = (ctx, drawingHistory, untilActionIndex, useActionIndexAsTim
     ctx.fillStyle = '#ffffff';
     clearCanvas(ctx);
 
-    let nextBrushColor = '#000000';
     ctx.lineJoin = 'round';
     ctx.lineWidth = 5;
 
@@ -23,17 +22,13 @@ const renderCanvas = (ctx, drawingHistory, untilActionIndex, useActionIndexAsTim
 
         if (event.action === RENDER_ACTIONS.START_STROKE) {
             ctx.beginPath();
-            ctx.strokeStyle = nextBrushColor;
+            ctx.strokeStyle = event.color;
             ctx.moveTo(event.point.x, event.point.y);
         }
 
 
         if (event.action === RENDER_ACTIONS.CLEAR_CANVAS) {
             clearCanvas(ctx);
-        }
-
-        if (event.action === RENDER_ACTIONS.SET_BRUSH_COLOR) {
-            nextBrushColor = event.color;
         }
     }
 };

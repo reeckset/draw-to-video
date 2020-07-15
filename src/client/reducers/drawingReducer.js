@@ -47,6 +47,7 @@ export default (state = initialState, action) => {
             timelineState: null,
             history: [...getHistoryUntilCurrentTimeline(state), {
                 ...action.payload,
+                color: state.brushColor,
                 action: RENDER_ACTIONS.START_STROKE,
             }]
         };
@@ -61,10 +62,6 @@ export default (state = initialState, action) => {
         return {
             ...state,
             brushColor: action.payload,
-            history: [...getHistoryUntilCurrentTimeline(state), {
-                action: RENDER_ACTIONS.SET_BRUSH_COLOR,
-                color: action.payload
-            }]
         };
     case ACTION_TYPES.SET_AUDIO:
         return {

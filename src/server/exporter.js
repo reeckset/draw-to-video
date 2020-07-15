@@ -1,15 +1,16 @@
 const path = require('path');
 const { createCanvas } = require('canvas');
 
-const canvas = createCanvas(1280, 720);
-const ctx = canvas.getContext('2d');
+
 const fs = require('fs');
 const { spawn } = require('child_process');
 const renderCanvas = require('../common/canvasRenderer');
-const { framerate } = require('../common/recordingOptions');
 
+const { framerate, canvasWidth, canvasHeight } = require('../common/recordingOptions');
 const { OUTPUT_TMP_FOLDER, OUTPUT_FOLDER } = require('../common/recordingOptions');
 
+const canvas = createCanvas(canvasWidth, canvasHeight);
+const ctx = canvas.getContext('2d');
 
 if (!fs.existsSync(OUTPUT_TMP_FOLDER)) {
     fs.mkdirSync(OUTPUT_TMP_FOLDER, { recursive: true });
@@ -73,8 +74,6 @@ const compileImagesWithFFMPEG = (audioPath) => {
 };
 
 const createVideo = ({ drawingHistory, audio }) => {
-    console.log('drawing history', drawingHistory[0]);
-    console.log('audio', audio);
     createImages(drawingHistory, audio);
     compileImagesWithFFMPEG(audio);
 };

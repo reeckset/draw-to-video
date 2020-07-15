@@ -1,8 +1,7 @@
-import ACTION_TYPES from '../actions/ACTION_TYPES';
+import { canvasWidth, canvasHeight } from '../../common/recordingOptions';
 
 const initialState = {
-    canvasWidth: 1280,
-    canvasHeight: 720,
+    canvasWidth, canvasHeight
 };
 
 export default (state = initialState, action) => {

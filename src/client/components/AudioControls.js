@@ -45,6 +45,7 @@ const AudioControls = React.forwardRef(({ file, width, onSeek }, ref) => {
                     value={playbackSpeed}
                     onChange={e => setPlaybackSpeed(e.target.value)}
                 >
+                    <MenuItem value={0.1}>0.10</MenuItem>
                     <MenuItem value={0.25}>0.20</MenuItem>
                     <MenuItem value={0.5}>0.50</MenuItem>
                     <MenuItem value={0.75}>0.75</MenuItem>
