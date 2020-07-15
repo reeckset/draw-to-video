@@ -2,10 +2,17 @@ import React, { useEffect, useState } from 'react';
 import useInterval from '../hooks/useInterval';
 import renderCanvas from '../../common/canvasRenderer';
 
+const Canvas = React.memo(React.forwardRef(({
+    size
+}, ref) => <canvas width={size.width} height={size.height} style={{ border: '1px solid #000000' }} ref={ref} />));
+
+
 const DrawingCanvas = React.forwardRef(({
     refreshRate, drawingHistory, atActionIndex, size
 }, ref) => {
     const [context, setContext] = useState(null);
+
+    const [lastRenderedActionIndex, setLastRenderedActionIndex] = useState(0);
 
     useEffect(() => {
         ref.current && setContext(ref.current.getContext('2d'));
@@ -13,13 +20,20 @@ const DrawingCanvas = React.forwardRef(({
 
     useInterval(() => {
         if (context) {
-            renderCanvas(context, drawingHistory, atActionIndex);
+            setLastRenderedActionIndex(
+                renderCanvas(
+                    context,
+                    drawingHistory,
+                    atActionIndex,
+                    { fromActionIndex: lastRenderedActionIndex }
+                )
+            );
         }
     }, 1000 / refreshRate);
 
     return (
         <>
-            <canvas width={size.width} height={size.height} style={{ border: '1px solid #000000' }} ref={ref} />
+            <Canvas ref={ref} size={size} />
         </>
     );
 });

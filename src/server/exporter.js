@@ -35,12 +35,17 @@ const createImages = (drawingHistory, audioFile) => {
 
     if (audioFile) {
         for (let i = 0; i / framerate <= drawingHistory[drawingHistory.length - 1].timestamp; i++) {
-            renderCanvas(ctx, drawingHistory, i / framerate, true);
+            renderCanvas(
+                ctx,
+                drawingHistory,
+                i / framerate,
+                { useActionIndexAsTimestamp: true, fromActionIndex: Math.max(i - 1, 0) }
+            );
             canvasDataToImage(i, canvas.toDataURL());
         }
     } else {
         drawingHistory.forEach((_, i) => {
-            renderCanvas(ctx, drawingHistory, i);
+            renderCanvas(ctx, drawingHistory, i, { fromActionIndex: Math.max(i - 1, 0) });
             canvasDataToImage(i, canvas.toDataURL());
         });
     }

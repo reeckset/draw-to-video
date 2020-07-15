@@ -2,15 +2,29 @@ const RENDER_ACTIONS = require('./RENDER_ACTIONS');
 
 const clearCanvas = ctx => ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
-const renderCanvas = (ctx, drawingHistory, untilActionIndex, useActionIndexAsTimestamp) => {
-    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-    ctx.fillStyle = '#ffffff';
-    clearCanvas(ctx);
+const renderCanvas = (
+    ctx,
+    drawingHistory,
+    untilActionIndex,
+    {
+        useActionIndexAsTimestamp,
+        fromActionIndex = 0
+    }
+) => {
+    const startFromAction = (
+        drawingHistory.length <= fromActionIndex
+        || untilActionIndex < fromActionIndex)
+        ? 0 : fromActionIndex;
 
-    ctx.lineJoin = 'round';
-    ctx.lineWidth = 5;
+    if (startFromAction === 0) {
+        clearCanvas(ctx);
+        ctx.fillStyle = '#ffffff';
 
-    for (let i = 0; i < drawingHistory.length; i++) {
+        ctx.lineJoin = 'round';
+        ctx.lineWidth = 5;
+    }
+
+    for (let i = startFromAction; i < drawingHistory.length; i++) {
         const event = drawingHistory[i];
         if (i > untilActionIndex && !useActionIndexAsTimestamp) break;
         if (event.timestamp > untilActionIndex && useActionIndexAsTimestamp) break;
@@ -31,6 +45,8 @@ const renderCanvas = (ctx, drawingHistory, untilActionIndex, useActionIndexAsTim
             clearCanvas(ctx);
         }
     }
+
+    return Math.max(drawingHistory.length - 1, 0);
 };
 
 if (module) module.exports = renderCanvas;

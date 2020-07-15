@@ -1,5 +1,5 @@
 module.exports = {
-    framerate: 15,
+    framerate: 30,
     canvasWidth: 1920,
     canvasHeight: 1080,
     OUTPUT_TMP_FOLDER: 'output/tmp',
