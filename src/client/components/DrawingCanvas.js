@@ -1,11 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import useInterval from '../hooks/useInterval';
 import renderCanvas from '../../common/canvasRenderer';
+import recordingOptions from '../../common/recordingOptions';
 
 const Canvas = React.memo(React.forwardRef(({
     size
-}, ref) => <canvas width={size.width} height={size.height} style={{ border: '1px solid #000000' }} ref={ref} />));
-
+}, ref) => (
+    <canvas
+        width={size.width}
+        height={size.height}
+        style={{ border: '1px solid #000000', touchAction: 'none' }}
+        ref={ref}
+        id={recordingOptions.CANVAS_ID}
+    />
+)));
 
 const DrawingCanvas = React.forwardRef(({
     refreshRate, drawingHistory, atActionIndex, size

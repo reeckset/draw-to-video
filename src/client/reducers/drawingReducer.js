@@ -1,5 +1,5 @@
 import ACTION_TYPES from '../actions/ACTION_TYPES';
-import { getActionIndexFromTimelineState } from '../selectors/timelineSelectors';
+import { getActionIndexFromTimelineState } from '../utils/timelineSelectors';
 
 const RENDER_ACTIONS = require('../../common/RENDER_ACTIONS');
 

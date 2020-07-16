@@ -11,6 +11,7 @@ module.exports = {
         path: path.join(__dirname, outputDirectory),
         filename: 'bundle.js'
     },
+    target: 'electron-renderer',
     module: {
         rules: [{
             test: /\.(js|jsx)$/,
@@ -34,7 +35,7 @@ module.exports = {
     },
     devServer: {
         port: 3000,
-        open: true,
+        // open: true,
         proxy: {
             '/api': 'http://localhost:8080'
         }

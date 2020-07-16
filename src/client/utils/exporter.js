@@ -1,16 +1,14 @@
 const path = require('path');
-const { createCanvas } = require('canvas');
 
-
-const fs = require('fs');
 const { spawn } = require('child_process');
-const renderCanvas = require('../common/canvasRenderer');
+const { remote } = require('electron');
+const renderCanvas = require('../../common/canvasRenderer');
 
-const { framerate, canvasWidth, canvasHeight } = require('../common/recordingOptions');
-const { OUTPUT_TMP_FOLDER, OUTPUT_FOLDER } = require('../common/recordingOptions');
 
-const canvas = createCanvas(canvasWidth, canvasHeight);
-const ctx = canvas.getContext('2d');
+const fs = remote.require('fs');
+
+const { framerate, CANVAS_ID } = require('../../common/recordingOptions');
+const { OUTPUT_TMP_FOLDER, OUTPUT_FOLDER } = require('../../common/recordingOptions');
 
 if (!fs.existsSync(OUTPUT_TMP_FOLDER)) {
     fs.mkdirSync(OUTPUT_TMP_FOLDER, { recursive: true });
@@ -18,21 +16,22 @@ if (!fs.existsSync(OUTPUT_TMP_FOLDER)) {
 
 const emptyOutputTmpFolder = () => {
     const files = fs.readdirSync(OUTPUT_TMP_FOLDER, { withFileTypes: true });
-
+    console.log(files);
     files.forEach((file) => {
-        if (file.isFile()) fs.unlinkSync(path.join(OUTPUT_TMP_FOLDER, file.name));
+        const filePath = path.join(OUTPUT_TMP_FOLDER, file);
+        if (!fs.lstatSync(filePath).isDirectory()) fs.unlinkSync(filePath);
     });
 };
 
 const canvasDataToImage = (frameNumber, img) => {
     const data = img.replace(/^data:image\/\w+;base64,/, '');
     const buf = new Buffer.from(data, 'base64');
-    fs.writeFileSync(`${OUTPUT_TMP_FOLDER}/${String(frameNumber).padStart(5, 0)}.png`, buf);
+    fs.writeFileSync(`${OUTPUT_TMP_FOLDER}/${String(frameNumber).padStart(5, '0')}.png`, buf);
 };
 
-const createImages = (drawingHistory, audioFile) => {
+const createImages = (drawingHistory, audioFile, canvas) => {
     console.log('exporting');
-
+    const ctx = canvas.getContext('2d');
     if (audioFile) {
         for (let i = 0; i / framerate <= drawingHistory[drawingHistory.length - 1].timestamp; i++) {
             renderCanvas(
@@ -79,7 +78,8 @@ const compileImagesWithFFMPEG = (audioPath) => {
 };
 
 const createVideo = ({ drawingHistory, audio }) => {
-    createImages(drawingHistory, audio);
+    const canvas = document.getElementById(CANVAS_ID);
+    createImages(drawingHistory, audio, canvas);
     compileImagesWithFFMPEG(audio);
 };
 

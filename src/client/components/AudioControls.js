@@ -15,9 +15,14 @@ const useStyles = width => makeStyles(() => ({
     }
 }));
 
-const AudioTag = React.memo(React.forwardRef(({ file, onSeek }, ref) => (
+const fs = require('electron').remote.require('fs');
+const dataurl = require('dataurl');
+
+const createURL = filePath => dataurl.convert({ data: fs.readFileSync(filePath), mimetype: 'audio/mp3' });
+
+const AudioTag = React.memo(React.forwardRef(({ filePath, onSeek }, ref) => (
     <audio
-        src={URL.createObjectURL(file)}
+        src={createURL(filePath)}
         autoPlay
         controls
         ref={ref}
@@ -26,7 +31,7 @@ const AudioTag = React.memo(React.forwardRef(({ file, onSeek }, ref) => (
     />
 )));
 
-const AudioControls = React.forwardRef(({ file, width, onSeek }, ref) => {
+const AudioControls = React.forwardRef(({ filePath, width, onSeek }, ref) => {
     const classes = useStyles(width)();
 
     const [playbackSpeed, setPlaybackSpeed] = useState(1);
@@ -38,7 +43,7 @@ const AudioControls = React.forwardRef(({ file, width, onSeek }, ref) => {
 
     return (
         <div className={classes.wrapper}>
-            <AudioTag ref={ref} file={file} onSeek={onSeek} />
+            <AudioTag ref={ref} filePath={filePath} onSeek={onSeek} />
             <FormControl className={classes.speedPicker}>
                 <InputLabel>Playback Speed</InputLabel>
                 <Select

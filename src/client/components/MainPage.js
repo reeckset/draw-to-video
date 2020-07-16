@@ -4,32 +4,38 @@ import DrawingCanvas from './DrawingCanvas';
 import ACTION_TYPES from '../actions/ACTION_TYPES';
 import Timeline from './Timeline';
 import AudioPlayer from './AudioControls';
-import { getActionIndexFromTimelineState } from '../selectors/timelineSelectors';
+import { getActionIndexFromTimelineState } from '../utils/timelineSelectors';
 import TopBar from './TopBar';
 
 const { framerate } = require('../../common/recordingOptions');
 
 const addEventListeners = (canvas, { addPoint, startStroke, stopDrawing }, getCurrentTimestamp) => {
-    canvas.addEventListener('mousedown', (e) => {
-        const mouseX = e.pageX - canvas.offsetLeft;
-        const mouseY = e.pageY - canvas.offsetTop;
+    const mouseDownEventListener = (pageX, pageY) => {
+        const mouseX = pageX - canvas.offsetLeft;
+        const mouseY = pageY - canvas.offsetTop;
 
         startStroke({ point: { x: mouseX, y: mouseY }, timestamp: getCurrentTimestamp() });
-    });
+    };
 
-    canvas.addEventListener('mousemove', (e) => {
-        const mouseX = e.pageX - canvas.offsetLeft;
-        const mouseY = e.pageY - canvas.offsetTop;
+    const mouseMoveEventListener = (pageX, pageY) => {
+        const mouseX = pageX - canvas.offsetLeft;
+        const mouseY = pageY - canvas.offsetTop;
 
         addPoint({ point: { x: mouseX, y: mouseY }, timestamp: getCurrentTimestamp() });
-    });
+    };
 
-    canvas.addEventListener('mouseup', () => {
+    const mouseStopEventListener = () => {
         stopDrawing();
-    });
-    canvas.addEventListener('mouseleave', () => {
-        stopDrawing();
-    });
+    };
+
+
+    canvas.addEventListener('mousedown', e => mouseDownEventListener(e.pageX, e.pageY));
+    canvas.addEventListener('mousemove', e => mouseMoveEventListener(e.pageX, e.pageY));
+    canvas.addEventListener('mouseup', mouseStopEventListener);
+    canvas.addEventListener('mouseleave', mouseStopEventListener);
+    canvas.addEventListener('touchstart', e => mouseDownEventListener(e.changedTouches[0].pageX, e.changedTouches[0].pageY));
+    canvas.addEventListener('touchmove', e => mouseMoveEventListener(e.changedTouches[0].pageX, e.changedTouches[0].pageY));
+    canvas.addEventListener('touchend', () => mouseStopEventListener);
 };
 
 const MainPage = ({
@@ -58,7 +64,7 @@ const MainPage = ({
                 ? (
                     <AudioPlayer
                         key="audioPlayer"
-                        file={audioFile}
+                        filePath={audioFile}
                         width={canvasSize.width}
                         onSeek={onTimelineSelect}
                         ref={audioPlayerRef}

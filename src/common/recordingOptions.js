@@ -4,4 +4,5 @@ module.exports = {
     canvasHeight: 1080,
     OUTPUT_TMP_FOLDER: 'output/tmp',
     OUTPUT_FOLDER: 'output',
+    CANVAS_ID: 'main-canvas'
 };

@@ -21,14 +21,15 @@ const Timeline = ({ width, timelineState, onTimelineSelect }) => {
 
     useEffect(() => {
         wrapperRef.current && wrapperRef.current.addEventListener('scroll', () => {
-            onTimelineSelect(wrapperRef.current.scrollLeft / wrapperRef.current.scrollLeftMax);
+            onTimelineSelect(wrapperRef.current.scrollLeft / wrapperRef.current.scrollWidth);
         });
-        wrapperRef.current.scrollTo(wrapperRef.current.scrollLeftMax, 0);
+        wrapperRef.current.scrollTo(wrapperRef.current.scrollWidth, 0);
+        console.log(wrapperRef.current);
     }, [wrapperRef.current]);
 
     useEffect(() => wrapperRef.current
         && wrapperRef.current.scrollTo(
-            (timelineState === null ? 1 : timelineState) * wrapperRef.current.scrollLeftMax, 0
+            (timelineState === null ? 1 : timelineState) * wrapperRef.current.scrollWidth, 0
         ), [timelineState]);
 
     return (
