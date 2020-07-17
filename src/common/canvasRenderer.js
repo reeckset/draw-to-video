@@ -26,8 +26,8 @@ const renderCanvas = (
 
     for (let i = startFromAction; i < drawingHistory.length; i++) {
         const event = drawingHistory[i];
-        if (i > untilActionIndex && !useActionIndexAsTimestamp) break;
-        if (event.timestamp > untilActionIndex && useActionIndexAsTimestamp) break;
+        if (i > untilActionIndex && !useActionIndexAsTimestamp) return i;
+        if (event.timestamp > untilActionIndex && useActionIndexAsTimestamp) return i;
 
         if (event.action === RENDER_ACTIONS.ADD_POINT) {
             ctx.lineTo(event.point.x, event.point.y);

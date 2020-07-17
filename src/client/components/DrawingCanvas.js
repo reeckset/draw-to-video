@@ -16,7 +16,9 @@ const Canvas = React.memo(React.forwardRef(({
 )));
 
 const addEventListeners = (
-    canvas, currentListeners, { addPoint, startStroke, stopDrawing }, getCurrentTimestamp, isTouchModeOn
+    canvas, currentListeners,
+    { addPoint, startStroke, stopDrawing },
+    getCurrentTimestamp, isTouchModeOn
 ) => {
     const mouseDownEventListener = (pageX, pageY) => {
         const mouseX = pageX - canvas.offsetLeft;
@@ -60,7 +62,13 @@ const addEventListeners = (
 };
 
 const DrawingCanvas = React.forwardRef(({
-    refreshRate, drawingHistory, atActionIndex, size, drawingControls, getCurrentTimestamp, isTouchModeOn
+    refreshRate,
+    drawingHistory,
+    atActionIndex,
+    size,
+    drawingControls,
+    getCurrentTimestamp,
+    isTouchModeOn
 }, ref) => {
     const [context, setContext] = useState(null);
 
