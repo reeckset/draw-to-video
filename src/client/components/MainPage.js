@@ -27,7 +27,7 @@ const MainPage = ({
 
     return (
         <>
-            <TopBar />
+            <TopBar getCurrentTimestamp={getCurrentTimestamp} />
             {audioFile
                 ? (
                     <AudioPlayer

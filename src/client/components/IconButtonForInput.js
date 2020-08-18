@@ -1,24 +1,28 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core';
+import { makeStyles, Button } from '@material-ui/core';
 
 const useStyles = makeStyles(() => ({
     input: {
-        display: 'none',
+        visibility: 'hidden',
+        width: 0,
+        padding: 0,
+        margin: 0,
     },
 }));
 
-const IconButtonForInput = ({ iconComponent, children }) => {
+const IconButtonForInput = React.forwardRef(({ children, ...props }, ref) => {
     const classes = useStyles();
     return (
         <>
             <label>
-                {iconComponent}
-                <div className={classes.input}>
+                <Button component="span">
                     {children}
-                </div>
+                </Button>
+                <input className={classes.input} ref={ref} {...props} />
             </label>
+
         </>
     );
-};
+});
 
 export default IconButtonForInput;

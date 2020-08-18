@@ -76,6 +76,7 @@ export default (state = initialState, action) => {
             ...state,
             history: [...getHistoryUntilCurrentTimeline(state), {
                 action: RENDER_ACTIONS.CLEAR_CANVAS,
+                ...action.payload
             }],
         };
 
