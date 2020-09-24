@@ -40,6 +40,10 @@ const renderCanvas = (
             ctx.moveTo(event.point.x, event.point.y);
         }
 
+        if (event.action === RENDER_ACTIONS.SET_BACKGROUND) {
+            ctx.drawImage(event.backgroundImage, 0, 0);
+        }
+
 
         if (event.action === RENDER_ACTIONS.CLEAR_CANVAS) {
             clearCanvas(ctx);

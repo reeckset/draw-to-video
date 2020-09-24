@@ -7,4 +7,5 @@ export default Object.freeze({
     SET_AUDIO: 'SET_AUDIO',
     CLEAR_CANVAS: 'CLEAR_CANVAS',
     TOGGLE_TOUCH_MODE: 'TOGGLE_TOUCH_MODE',
+    SET_BACKGROUND: 'SET_BACKGROUND',
 });

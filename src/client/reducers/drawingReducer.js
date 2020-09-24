@@ -71,6 +71,16 @@ export default (state = initialState, action) => {
             history: [],
         };
 
+    case ACTION_TYPES.SET_BACKGROUND:
+        return {
+            ...state,
+            timelineState: null,
+            history: [...getHistoryUntilCurrentTimeline(state), {
+                backgroundImage: action.payload,
+                action: RENDER_ACTIONS.SET_BACKGROUND,
+            }]
+        };
+
     case ACTION_TYPES.CLEAR_CANVAS:
         return {
             ...state,

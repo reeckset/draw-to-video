@@ -10,6 +10,7 @@ import {
     ClearAll as ClearAllIcon
 } from '@material-ui/icons';
 import AudioPicker from './AudioPicker';
+import ImagePicker from './ImagePicker';
 import ExportButton from './ExportButton';
 import ACTION_TYPES from '../actions/ACTION_TYPES';
 import IconButtonForInput from './IconButtonForInput';
@@ -36,6 +37,7 @@ const TopBar = ({
     toggleTouchMode,
     isTouchModeOn,
     getCurrentTimestamp,
+    setBackgroundFile
 }) => {
     const classes = useStyles();
 
@@ -45,6 +47,7 @@ const TopBar = ({
         <div className={classes.wrapper}>
             <ExportButton drawingHistory={drawingHistory} audioFile={audioFile} />
             <AudioPicker onSelectFile={setAudioFile} />
+            <ImagePicker onSelectFile={setBackgroundFile} />
             <IconButtonForInput ref={ref} type="color" value={color} onChange={() => setColor(ref.current.value)}>
                 <ColorLensIcon style={{ color }} />
             </IconButtonForInput>
@@ -65,6 +68,7 @@ export default connect(state => ({
     isTouchModeOn: state.settings.isTouchModeOn,
 }), dispatch => ({
     setAudioFile: payload => dispatch({ type: ACTION_TYPES.SET_AUDIO, payload }),
+    setBackgroundFile: payload => dispatch({ type: ACTION_TYPES.SET_BACKGROUND, payload }),
     setColor: payload => dispatch({ type: ACTION_TYPES.SET_BRUSH_COLOR, payload }),
     clearCanvas: payload => dispatch({ type: ACTION_TYPES.CLEAR_CANVAS, payload }),
     toggleTouchMode: () => dispatch({ type: ACTION_TYPES.TOGGLE_TOUCH_MODE })
